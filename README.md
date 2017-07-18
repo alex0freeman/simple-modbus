@@ -1,12 +1,12 @@
 # simple-modbus
 纯C语言实现，Modbus的一个字集，实现了0x01, 0x02, 0x03, 0x04, 0x05, 0x6, 0x0f, 0x10这几个最常用的功能
 
-##帧结构初始化接口，使用帧结构前必须先调用此接口
+## 帧结构初始化接口，使用帧结构前必须先调用此接口
 ```c
 void init_frame(rtu_frame_t *m)
 ```
 
-##制作请求帧，从设备会调用这些接口
+## 制作请求帧，从设备会调用这些接口
 ```c
 
 //读连续线圈
@@ -35,7 +35,7 @@ int make_x10_request(rtu_frame_t *frame, unsigned char slave, unsigned short add
 
 ```
 
-##制作回复帖，modbus的服务端会调用到这些接口
+## 制作回复帖，modbus的服务端会调用到这些接口
 ```c
 /* 制作回复读线圈请求的回复帧 */
 int make_x01_response(rtu_frame_t *frame, unsigned char slave, unsigned char byte, unsigned char *data);
@@ -63,7 +63,7 @@ int make_x10_response(rtu_frame_t *frame, unsigned char slave, unsigned short ad
 
 ```
 
-##主端制作回复异常请求帧的回应帧
+## 主端制作回复异常请求帧的回应帧
 ```c
 /* 回复读线圈异常的回应帧 */
 int make_x80_x01_response(rtu_frame_t *frame, unsigned char slave, unsigned char code);
@@ -94,15 +94,15 @@ int make_exception_response(rtu_frame_t *frame, unsigned char slave, unsigned ch
 
 ```
 
-##Modbus 请求与回复处理最高层接口
-###modbus_context_t各字段说明
-fd：在linux环境下fd可以是socket或打开的文件号
-time：用来获取系统时间，返回以毫秒为单位的当前时间
-usleep：用于读写操作的延时，参数以微秒为单位，本字段可以为空
-send：发送数据帧的接口，不能为空（第一个参数是fd，第二个参数是数据指针，第三个参数是数据长度）
-recv：接收数据帧的接口，不能为空（第一个参数是fd，第二个参数是缓冲区指针，第三个参数是缓冲区大小）
-succ：过程成功会回调此函数，不能为空
-fail：过程失败会回调此函数，不能为空
+## Modbus 请求与回复处理最高层接口
+### modbus_context_t各字段说明
+> fd：在linux环境下fd可以是socket或打开的文件号
+> time：用来获取系统时间，返回以毫秒为单位的当前时间
+> usleep：用于读写操作的延时，参数以微秒为单位，本字段可以为空
+> send：发送数据帧的接口，不能为空（第一个参数是fd，第二个参数是数据指针，第三个参数是数据长度）
+> recv：接收数据帧的接口，不能为空（第一个参数是fd，第二个参数是缓冲区指针，第三个参数是缓冲区大小）
+> succ：过程成功会回调此函数，不能为空
+> fail：过程失败会回调此函数，不能为空
 
 ```c
 typedef struct
