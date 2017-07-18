@@ -48,7 +48,6 @@ int main(int argc, char **argv)
 	make_x03_request(&frame, 1, 0, 2);
 
 	modbus_context_init(&context);
-
 	context.fd = fd;
 	context.time = mtime;
 	context.send = send;
@@ -92,63 +91,17 @@ int mtime(void)
 }
 int send(int fd, char *data, int len)
 {
-	//printf("%s\n", __func__);
 	return uart_write(fd, data, len);
 }
 int recv(int fd, char *buf, int len)
 {
-	//printf("%s\n", __func__);
 	return uart_read(fd, buf, len);
 }
 int succ(rtu_frame_t *frame, modbus_error_t error)
 {
 	return 0;
-	switch(error)
-	{
-		case error_check_ok:
-			break;
-		case error_recv_ok:
-			showhex(frame->response.data, frame->residx);
-			break;
-		case error_send_ok:
-			printf("send:");
-			green_begin();
-			show_request(frame);
-			green_end();
-			break;
-		case error_none_ok:
-			printf("recv:");
-			green_begin();
-			green_begin();
-			show_response(frame);
-			green_end();
-			printf("value[0]=%d\n", get_response_value(frame, 0));
-			printf("value[1]=%d\n", get_response_value(frame, 1));
-			break;
-	}
 }
 int fail(rtu_frame_t *frame, modbus_error_t error)
 {
 	return 0;
-	switch(error)
-	{
-		case error_check_failed:
-			printf("check failed:");
-			red_begin();
-			show_request(frame);
-			red_end();
-			break;
-		case error_send_failed:
-			printf("send failed:");
-			red_begin();
-			show_request(frame);
-			red_end();
-			break;
-		case error_recv_timeout:
-			printf("recv timeout:");
-			red_begin();
-			show_response(frame);
-			red_end();
-			break;
-	}
 }
