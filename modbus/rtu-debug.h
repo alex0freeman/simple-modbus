@@ -1,6 +1,10 @@
 #ifndef __DEBUG_H__
 #define __DEBUG_H__
 
+#ifdef cplusplus
+extern "C"
+#endif//cplusplus
+
 #define green_begin()	printf("\033[1;32;48m")
 #define green_end()		printf("\033[0m")
 #define red_begin()		printf("\033[1;31;48m")

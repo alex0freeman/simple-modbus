@@ -1,4 +1,6 @@
+#include "frame-access.h"
 #include "make-response.h"
+#include "check-response.h"
 
 int make_x01_response
 (
@@ -15,7 +17,7 @@ int make_x01_response
 	set_response_slave(frame, slave);
 	set_response_funcode(frame, x01_read_coil);
 	set_response_byte(frame, byte);
-	set_response_data(frame, data, byte);
+	set_response_data(frame, (const char*)data, byte);
 	set_response_crc(frame, calc_response_crc(frame));
 	return Error_Ok;
 }
@@ -35,7 +37,7 @@ int make_x02_response
 	set_response_slave(frame, slave);
 	set_response_funcode(frame, x02_read_descrete);
 	set_response_byte(frame, byte);
-	set_response_data(frame, data, byte);
+	set_response_data(frame, (const char*)data, byte);
 	set_response_crc(frame, calc_response_crc(frame));
 	return Error_Ok;
 }
@@ -55,7 +57,7 @@ int make_x03_response
 	set_response_slave(frame, slave);
 	set_response_funcode(frame, x03_read_holding);
 	set_response_byte(frame, byte);
-	set_response_data(frame, data, byte);
+	set_response_data(frame, (const char*)data, byte);
 	set_response_crc(frame, calc_response_crc(frame));
 	return Error_Ok;
 }
@@ -75,7 +77,7 @@ int make_x04_response
 	set_response_slave(frame, slave);
 	set_response_funcode(frame, x04_read_input);
 	set_response_byte(frame, byte);
-	set_response_data(frame, data, byte);
+	set_response_data(frame, (const char*)data, byte);
 	set_response_crc(frame, calc_response_crc(frame));
 	return Error_Ok;
 }

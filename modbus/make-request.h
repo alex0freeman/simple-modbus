@@ -2,6 +2,10 @@
 #define __MAKE_REQUEST_H__
 #include "frame-access.h"
 
+#ifdef cplusplus
+extern "C"
+#endif//cplusplus
+
 //read coil
 int make_x01_request
 (

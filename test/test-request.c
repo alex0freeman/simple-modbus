@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include "rtu-debug.h"
 #include "make-request.h"
 #include "check-request.h"
@@ -40,10 +41,10 @@ int main(void)
 	make_x06_request(&frame, 1, 66, 166);
 	check_and_show(check_x06_request, frame);
 
-	make_x0f_request(&frame, 1, 0x1234, 33, 5, "\x33\x44\x55\x66\x00");
+	make_x0f_request(&frame, 1, 0x1234, 33, 5, (unsigned char*)"\x33\x44\x55\x66\x00");
 	check_and_show(check_x0f_request, frame);
 
-	make_x10_request(&frame, 1, 0x4567, 2, 4, "\x77\x88\x99\xaa");
+	make_x10_request(&frame, 1, 0x4567, 2, 4, (unsigned char*)"\x77\x88\x99\xaa");
 	check_and_show(check_x10_request, frame);
 
 	init_request(&frame);

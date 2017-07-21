@@ -1,3 +1,4 @@
+#include "frame-access.h"
 #include "make-request.h"
 
 
@@ -172,7 +173,7 @@ int make_x0f_request
 	set_request_address(frame, address);
 	set_request_count(frame, count);
 	set_request_byte(frame, byte);
-	set_request_data(frame, data, byte);
+	set_request_data(frame, (const char*)data, byte);
 	set_request_crc(frame, calc_request_crc(frame));
 	return Error_Ok;
 }
@@ -201,7 +202,7 @@ int make_x10_request
 	set_request_address(frame, address);
 	set_request_count(frame, count);
 	set_request_byte(frame, byte);
-	set_request_data(frame, data, byte);
+	set_request_data(frame, (const char*)data, byte);
 	set_request_crc(frame, calc_request_crc(frame));
 	return Error_Ok;
 }

@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include "rtu-debug.h"
 #include "check-request.h"
 

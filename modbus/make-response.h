@@ -2,6 +2,10 @@
 #define __MAKE_RESPONSE_H__
 #include "frame-access.h"
 
+#ifdef cplusplus
+extern "C"
+#endif//cplusplus
+
 /* make normal response */
 int make_x01_response
 (

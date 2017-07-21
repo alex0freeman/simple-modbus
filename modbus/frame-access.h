@@ -1,6 +1,10 @@
-#ifndef __FRAME_ACCESS_H__
-#define __FRAME_ACCESS_H__
+#ifndef _FRAME_ACCESS_H__
+#define _FRAME_ACCESS_H__
 #include "rtu-define.h"
+
+#ifdef cplusplus
+extern "C"
+#endif//cplusplus
 
 #define SLAVE_INDEX			0
 #define FUNCTION_INDEX		1
@@ -22,8 +26,8 @@ int push_request(rtu_frame_t *m, const char *data, int len);
 const char* get_request_sendpoint(rtu_frame_t *m);
 const int get_request_sendlength(rtu_frame_t *m);
 
-int get_request_salve(rtu_frame_t* m);
-int set_request_salve(rtu_frame_t* m, int slave);
+int get_request_slave(rtu_frame_t* m);
+int set_request_slave(rtu_frame_t* m, int slave);
 
 int get_request_funcode(rtu_frame_t* m);
 int set_request_funcode(rtu_frame_t* m, int funtion);
@@ -83,5 +87,6 @@ int get_succlen(rtu_frame_t* m);
 int get_excplen(rtu_frame_t* m);
 
 int get_exception_code(rtu_frame_t *m);
+int set_exception_code(rtu_frame_t *m, int code);
 
 #endif//__FRAME_ACCESS_H__

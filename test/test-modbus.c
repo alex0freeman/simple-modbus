@@ -3,12 +3,12 @@
 #include <unistd.h>
 #include <sys/time.h>
 #include "uart.h"
-#include "modbus.h"
+#include "modbus-context.h"
 
 
 int mtime(void);
-int send(int, char*, int);
 int recv(int, char*, int);
+int send(int, char*, int);
 int succ(rtu_frame_t*, modbus_error_t);
 int fail(rtu_frame_t*, modbus_error_t);
 
@@ -16,7 +16,7 @@ int main(int argc, char **argv)
 {
 	int fd = -1;
 	int baud = 115200;
-	char *file = "/dev/ttyS0";
+	char *file = (char*)"/dev/ttyS0";
 	modbus_context_t context;
 	rtu_frame_t frame;
 
@@ -48,14 +48,15 @@ int main(int argc, char **argv)
 	make_x03_request(&frame, 1, 0, 2);
 
 	modbus_context_init(&context);
+
 	context.fd = fd;
-	context.time = mtime;
+	context.mstime = mtime;
 	context.send = send;
 	context.recv = recv;
-	context.succ = succ;
-	context.fail = fail;
+	context.success = succ;
+	context.failed = fail;
 	context.timeout = 200;
-	context.usleep = usleep;
+	context.msleep = usleep;
 
 	while(1)
 	{
@@ -91,17 +92,63 @@ int mtime(void)
 }
 int send(int fd, char *data, int len)
 {
+	//printf("%s\n", __func__);
 	return uart_write(fd, data, len);
 }
 int recv(int fd, char *buf, int len)
 {
+	//printf("%s\n", __func__);
 	return uart_read(fd, buf, len);
 }
 int succ(rtu_frame_t *frame, modbus_error_t error)
 {
 	return 0;
+	switch(error)
+	{
+		case error_check_ok:
+			break;
+		case error_recv_ok:
+			showhex(frame->response.data, frame->residx);
+			break;
+		case error_send_ok:
+			printf("send:");
+			green_begin();
+			show_request(frame);
+			green_end();
+			break;
+		case error_none_ok:
+			printf("recv:");
+			green_begin();
+			green_begin();
+			show_response(frame);
+			green_end();
+			printf("value[0]=%d\n", get_response_value(frame, 0));
+			printf("value[1]=%d\n", get_response_value(frame, 1));
+			break;
+	}
 }
 int fail(rtu_frame_t *frame, modbus_error_t error)
 {
 	return 0;
+	switch(error)
+	{
+		case error_check_failed:
+			printf("check failed:");
+			red_begin();
+			show_request(frame);
+			red_end();
+			break;
+		case error_send_failed:
+			printf("send failed:");
+			red_begin();
+			show_request(frame);
+			red_end();
+			break;
+		case error_recv_timeout:
+			printf("recv timeout:");
+			red_begin();
+			show_response(frame);
+			red_end();
+			break;
+	}
 }

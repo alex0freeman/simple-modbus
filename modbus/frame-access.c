@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include "rtu-debug.h"
 #include "crc-modbus.h"
 #include "frame-access.h"
@@ -378,7 +379,7 @@ const char* get_response_sendpoint(rtu_frame_t *m)
 	{
 		return (char*)m->response.data;
 	}
-	return NULL;
+	return (char*)NULL;
 }
 const int get_response_sendlength(rtu_frame_t *m)
 {

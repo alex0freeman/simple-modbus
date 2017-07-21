@@ -17,28 +17,28 @@ int uart_config(int fd, int baud, char parity, int bsize, int stop)
 	}
 	else
 	{
-		struct termios new = {0};
+		struct termios newios = {0};
 
-		bzero(&new, sizeof(new));
-		if( set_speed(&new, baud) )
+		bzero(&newios, sizeof(newios));
+		if( set_speed(&newios, baud) )
 		{
 			return -2;
 		}
-		if( set_parity(&new, parity) )
+		if( set_parity(&newios, parity) )
 		{
 			return -3;
 		}
-		if( set_bsize(&new, bsize) )
+		if( set_bsize(&newios, bsize) )
 		{
 			return -4;
 		}
-		if( set_stop(&new, stop) )
+		if( set_stop(&newios, stop) )
 		{
 			return -5;
 		}
-		enable_read(&new);
-		disable_flow_control(&new);
-		if( set_termios(fd, &new) )
+		enable_read(&newios);
+		disable_flow_control(&newios);
+		if( set_termios(fd, &newios) )
 		{
 			return -6;
 		}

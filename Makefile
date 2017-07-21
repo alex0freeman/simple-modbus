@@ -1,6 +1,7 @@
 ARCH := x86_64-linux-gnu-
 ARCH := arm-linux-
 CC := $(ARCH)gcc
+CC := $(ARCH)g++
 STRIP := $(ARCH)strip
 FLAGS := -I. -Imodbus -Iuart -g
 TEST-DIR := test
@@ -15,7 +16,9 @@ REQUEST += $(MODBUS-DIR)/make-request.c
 RESPONSE := $(MODBUS-DIR)/make-response.c
 RESPONSE += $(MODBUS-DIR)/check-response.c
 
-MODBUS := $(MODBUS-DIR)/modbus.c
+MODBUS := $(MODBUS-DIR)/modbus-context.c
+MODBUS += $(MODBUS-DIR)/frame-context.cpp
+MODBUS += $(MODBUS-DIR)/modbus.cpp
 MODBUS += $(CRC) $(FRAME)
 MODBUS += $(REQUEST)
 MODBUS += $(RESPONSE)
@@ -25,6 +28,7 @@ UART := uart/uart.c uart/accesstermios.c
 TEST-REQUEST := $(MODBUS) $(TEST-DIR)/test-request.c
 TEST-RESPONSE:= $(MODBUS) $(TEST-DIR)/test-response.c
 TEST-MODBUS := $(UART) $(MODBUS) $(TEST-DIR)/test-modbus.c
+TEST-MODBUSX := $(UART) $(MODBUS) $(TEST-DIR)/test-modbusx.cpp
 
 alltest:
 	make test-request
@@ -46,6 +50,11 @@ test-modbus: $(TEST-MODBUS)
 	$(CC) $+ $(FLAGS) -o $@
 	$(STRIP) $@
 
+test-modbusx: $(TEST-MODBUSX)
+	$(CC) $+ $(FLAGS) -o $@
+	$(STRIP) $@
+
+
 
 copy:
 	cp uarttest /srv/tftp/
@@ -53,6 +62,7 @@ copy:
 clean:
 	@rm -vf uarttest
 	@rm -vf test-modbus
+	@rm -vf test-modbusx
 	@rm -vf test-request
 	@rm -vf test-response
 	@rm -vf modbus/*.o
