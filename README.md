@@ -1,133 +1,122 @@
-# simple-modbus
-纯C语言实现，Modbus的一个子集，实现了0x01, 0x02, 0x03, 0x04, 0x05, 0x6, 0x0f, 0x10这几个最常用的功能
+Simple-modbus
 
-## 帧结构初始化接口，使用帧结构前必须先调用此接口
-```c
-void init_frame(rtu_frame_t *m)
-```
+Pure C implementation, a subset of Modbus, implements the most commonly used functions 0x01, 0x02, 0x03, 0x04, 0x05, 0x6, 0x0f, 0x10
+The frame structure initializes the interface. This interface must be called before using the frame structure.
 
-## 制作请求帧，从设备会调用这些接口
-```c
+Void init_frame(rtu_frame_t *m)
 
-//读连续线圈
-int make_x01_request(rtu_frame_t *frame, unsigned char slave, unsigned short address, unsigned short count);
+Make a request frame, the slave will call these interfaces
 
-//读取离散线圈
-int make_x02_request(rtu_frame_t *frame, unsigned char slave, unsigned short address, unsigned short count);
+/ / Read continuous coil
+Int make_x01_request(rtu_frame_t *frame, unsigned char slave, unsigned short address, unsigned short count);
 
-//读保持寄存器 
-int make_x03_request(rtu_frame_t *frame, unsigned char slave, unsigned short address, unsigned short count);
+/ / Read the discrete coil
+Int make_x02_request(rtu_frame_t *frame, unsigned char slave, unsigned short address, unsigned short count);
 
-//读输入寄存器
-int make_x04_request(rtu_frame_t *frame, unsigned char slave, unsigned short address, unsigned short count);
+//Read holding register
+Int make_x03_request(rtu_frame_t *frame, unsigned char slave, unsigned short address, unsigned short count);
 
-//写一个线圈状态，value取值是0xff00、0x00ff，0xff00代表状态1，0x00ff代表状态0
-int make_x05_request(rtu_frame_t *frame, unsigned char slave, unsigned short address, unsigned short value);
+/ / read the input register
+Int make_x04_request(rtu_frame_t *frame, unsigned char slave, unsigned short address, unsigned short count);
 
-//写一个寄存器
-int make_x06_request(rtu_frame_t *frame, unsigned char slave, unsigned short address, unsigned short value);
+/ / Write a coil state, value is 0xff00, 0x00ff, 0xff00 represents state 1, 0x00ff represents state 0
+Int make_x05_request(rtu_frame_t *frame, unsigned char slave, unsigned short address, unsigned short value);
 
-//写多个线圈，每个线圈占一个位，只有0、1两种状态
-int make_x0f_request(rtu_frame_t *frame, unsigned char slave, unsigned short address, unsigned short count, unsigned char byte, unsigned char *data);
+/ / Write a register
+Int make_x06_request(rtu_frame_t *frame, unsigned char slave, unsigned short address, unsigned short value);
 
-//写多个寄存器，每个寄存器占两个字节
-int make_x10_request(rtu_frame_t *frame, unsigned char slave, unsigned short address, unsigned short count, unsigned char byte, unsigned char *data);
+/ / Write multiple coils, each coil occupies one bit, only 0, 1 two states
+Int make_x0f_request(rtu_frame_t *frame, unsigned char slave, unsigned short address, unsigned short count, unsigned char byte, unsigned char *data);
 
-```
+/ / Write multiple registers, each register occupies two bytes
+Int make_x10_request(rtu_frame_t *frame, unsigned char slave, unsigned short address, unsigned short count, unsigned char byte, unsigned char *data);
 
-## 制作回复帖，modbus的服务端会调用到这些接口
-```c
-/* 制作回复读线圈请求的回复帧 */
-int make_x01_response(rtu_frame_t *frame, unsigned char slave, unsigned char byte, unsigned char *data);
+Make a reply post, modbus server will call these interfaces
 
-/* 制作回复读离散线圈请求的回复帧 */
-int make_x02_response(rtu_frame_t *frame, unsigned char slave, unsigned char byte, unsigned char *data);
+/* Make a reply frame to reply to the read coil request */
+Int make_x01_response(rtu_frame_t *frame, unsigned char slave, unsigned char byte, unsigned char *data);
 
-/* 制作回复读离保持寄存器请求的回复帧 */
-int make_x03_response(rtu_frame_t *frame, unsigned char slave, unsigned char byte, unsigned char *data);
+/* Make a reply frame that responds to a request to read a discrete coil */
+Int make_x02_response(rtu_frame_t *frame, unsigned char slave, unsigned char byte, unsigned char *data);
 
-/* 制作回复读离输入寄存器请求的回复帧 */
-int make_x04_response(rtu_frame_t *frame, unsigned char slave, unsigned char byte, unsigned char *data);
+/* Make a reply frame that reads back from the hold register request */
+Int make_x03_response(rtu_frame_t *frame, unsigned char slave, unsigned char byte, unsigned char *data);
 
-/* 制作回复写单个线圈的请求的回复帧 */
-int make_x05_response(rtu_frame_t *frame, unsigned char slave, unsigned short address, unsigned short value );
+/* Make a reply frame that responds to the request read from the input register */
+Int make_x04_response(rtu_frame_t *frame, unsigned char slave, unsigned char byte, unsigned char *data);
 
-/* 制作回复写单个寄存器请求的回复帧 */
-int make_x06_response(rtu_frame_t *frame, unsigned char slave, unsigned short address, unsigned short value );
+/* Make a reply frame that responds to a request to write a single coil */
+Int make_x05_response(rtu_frame_t *frame, unsigned char slave, unsigned short address, unsigned short value );
 
-/* 制作回复写多个连续线圈请求的回复帧 */
-int make_x0f_response(rtu_frame_t *frame, unsigned char slave, unsigned short address, unsigned short count );
+/* Make a reply frame that replies to a single register request */
+Int make_x06_response(rtu_frame_t *frame, unsigned char slave, unsigned short address, unsigned short value );
 
-/* 制作回复写多个连续寄存器请求的回复帧 */
-int make_x10_response(rtu_frame_t *frame, unsigned char slave, unsigned short address, unsigned short count );
+/* Make a reply frame that responds to multiple consecutive coil requests */
+Int make_x0f_response(rtu_frame_t *frame, unsigned char slave, unsigned short address, unsigned short count );
 
-```
+/* Make a reply frame that replies to multiple consecutive register requests */
+Int make_x10_response(rtu_frame_t *frame, unsigned char slave, unsigned short address, unsigned short count );
 
-## 主端制作回复异常请求帧的回应帧
-```c
-/* 回复读线圈异常的回应帧 */
-int make_x80_x01_response(rtu_frame_t *frame, unsigned char slave, unsigned char code);
+The master makes a response frame that responds to the exception request frame.
 
-/* 回复读离散线圈异常的回应帧 */
-int make_x80_x02_response(rtu_frame_t *frame, unsigned char slave, unsigned char code);
+/* Reply to the response frame of the read coil exception */
+Int make_x80_x01_response(rtu_frame_t *frame, unsigned char slave, unsigned char code);
 
-/* 回复读保持寄存器异常的回应帧 */
-int make_x80_x03_response(rtu_frame_t *frame, unsigned char slave, unsigned char code);
+/* Reply to the response frame of the read discrete coil exception */
+Int make_x80_x02_response(rtu_frame_t *frame, unsigned char slave, unsigned char code);
 
-/* 回复读输入寄存器异常的回应帧 */
-int make_x80_x04_response(rtu_frame_t *frame, unsigned char slave, unsigned char code);
+/* Reply to read response register exception register response */
+Int make_x80_x03_response(rtu_frame_t *frame, unsigned char slave, unsigned char code);
 
-/* 回复写单线圈异常的回应帧 */
-int make_x80_x05_response(rtu_frame_t *frame, unsigned char slave, unsigned char code);
+/* Reply to the response frame of the read input register exception */
+Int make_x80_x04_response(rtu_frame_t *frame, unsigned char slave, unsigned char code);
 
-/* 回复写单寄存器异常的回应帧 */
-int make_x80_x06_response(rtu_frame_t *frame, unsigned char slave, unsigned char code);
+/* Reply to the response frame of the write single coil exception */
+Int make_x80_x05_response(rtu_frame_t *frame, unsigned char slave, unsigned char code);
 
-/* 回复写多线圈异常的回应帧 */
-int make_x80_x0f_response(rtu_frame_t *frame, unsigned char slave, unsigned char code);
+/* Reply to the response frame of the write register exception */
+Int make_x80_x06_response(rtu_frame_t *frame, unsigned char slave, unsigned char code);
 
-/* 回复写多寄存器异常的回应帧 */
-int make_x80_x10_response(rtu_frame_t *frame, unsigned char slave, unsigned char code);
+/* Reply to the response frame for writing multiple coil anomalies */
+Int make_x80_x0f_response(rtu_frame_t *frame, unsigned char slave, unsigned char code);
 
-/* 通用制作异常请求回应帧的接口 */
-int make_exception_response(rtu_frame_t *frame, unsigned char slave, unsigned char funcode, unsigned char code);
+/* Reply to the response frame for writing multiple register exceptions */
+Int make_x80_x10_response(rtu_frame_t *frame, unsigned char slave, unsigned char code);
 
-```
+/* General interface for making exception request response frames */
+Int make_exception_response(rtu_frame_t *frame, unsigned char slave, unsigned char funcode, unsigned char code);
 
-## Modbus 请求与回复处理最高层接口
-### modbus_context_t各字段说明
+Modbus request and reply processing top level interface
+Modbus_context_t field description
 
-```c
-/* ********************************************************************************************
- * fd：在linux环境下fd可以是socket或打开的文件号                                                 *
- * time：用来获取系统时间，返回以毫秒为单位的当前时间                                             *
- * usleep：用于读写操作的延时，参数以微秒为单位，本字段可以为空                                    *
- * send：发送数据帧的接口，不能为空（第一个参数是fd，第二个参数是数据指针，第三个参数是数据长度）     *
- * recv：接收数据帧的接口，不能为空（第一个参数是fd，第二个参数是缓冲区指针，第三个参数是缓冲区大小）  *
- * succ：过程成功会回调此函数，不能为空                                                          *
- * fail：过程失败会回调此函数，不能为空                                                          *
- **********************************************************************************************/
+/* ************************************************ ********************************************
+ * fd: fd can be a socket or open file number in linux environment *
+ * time: used to get the system time, return the current time in milliseconds *
+ * usleep: delay for read and write operations, parameters in microseconds, this field can be empty *
+ * send: The interface for sending data frames cannot be empty (the first parameter is fd, the second parameter is data pointer, and the third parameter is data length) *
+ * recv: The interface that receives the data frame, can't be empty (the first parameter is fd, the second parameter is the buffer pointer, and the third parameter is the buffer size) *
+ * succ: The process will call back this function, it can't be empty *
+ * fail: The procedure will call back this function, it can't be empty *
+ ************************************************** ********************************************/
 
 
-typedef struct
+Typedef struct
 {
-	int fd;
-	int timeout;
-	int (*time)(void);
-	int (*usleep)(unsigned int);
-	int (*send)(int, char*, int);
-	int (*recv)(int, char*, int);
-	int (*succ)(rtu_frame_t*, modbus_error_t);
-	int (*fail)(rtu_frame_t*, modbus_error_t);
+Int fd;
+Int timeout;
+Int (*time)(void);
+Int (*usleep)(unsigned int);
+Int (*send)(int, char*, int);
+Int (*recv)(int, char*, int);
+Int (*succ)(rtu_frame_t*, modbus_error_t);
+Int (*fail)(rtu_frame_t*, modbus_error_t);
 }modbus_context_t;
 
-/* modub上下文初始化接口，使用modbus_context_t前必须先调用此接口 */
-int modbus_context_init(modbus_context_t*);
+/* modub context initialization interface, this interface must be called before using modbus_context_t */
+Int modbus_context_init(modbus_context_t*);
 
-/* 从端调用些接口进行请求，成功则返回0，回复帧保存在frame->response内，失败则返回失败码，modbus.h定义了失败码 */
-int modbus_request(modbus_context_t* context， rtu_frame_t* frame);
+/* The interface is called from the end to make a request. If it succeeds, it returns 0. The reply frame is saved in frame->response. If it fails, it returns the failure code. modbus.h defines the failure code.
+Int modbus_request(modbus_context_t* context, rtu_frame_t* frame);
 
-/* 主端调用些接口进行回复，成功则返回0，失败则返回失败码，modbus.h定义了失败码 */
-int modbus_response(modbus_context_t* context, rtu_frame_t* frame);
-
-```
+/* The master calls these interfaces to reply. If it succeeds, it returns 0. If it fails, it returns the failure code. modbus.h defines the failure code.
+Int modbus_response(modbus_context_t* context, rtu_frame_t* frame);
